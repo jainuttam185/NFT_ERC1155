@@ -5,11 +5,13 @@ const ethers = require("ethers");
 import nft from "../frontend/app/artifacts/contracts/nft.sol/nft.json";
 import Image from "next/image";
 import spidermanImage from './spiderman.jpeg';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 class CampaignIndex extends Component {
   state = {
-  token: 2, outputValue: "", contract:"", Provider:"",ipfsaddress:"ipfs://bafkreidblxpobb5frd57djj43mavu2ixtbyrofqq3ieflpwavaoqq524yq" ,toaddress:"0xf261F307159B06BeAAB840fe4281d456F5156A50", contractAddress: "0x96aE869d6b5E45eD78609747775b835947491FDe"
+  token: 0, outputValue: "", contract:"", Provider:"",ipfsaddress:"ipfs://bafkreidblxpobb5frd57djj43mavu2ixtbyrofqq3ieflpwavaoqq524yq" ,toaddress:"0xf261F307159B06BeAAB840fe4281d456F5156A50", contractAddress: "0xA7bec887322DF05a20eBCe37B82d0a3ab4Db9706",loading:false
 };
 
   async componentDidMount() {
@@ -56,8 +58,15 @@ class CampaignIndex extends Component {
   onSubmit = async (event) => {
     console.log(this.state.contract)
     event.preventDefault();
-    const mint = await this.state.contract.mint(this.state.toaddress, this.state.ipfsaddress);
+    const mint = await this.state.contract.mint(this.state.ipfsaddress,{value:ethers.parseEther("0.0001")});
     await mint.wait();
+  };
+
+  onSubmitBurn = async (event) => {
+    console.log(this.state.contract)
+    event.preventDefault();
+    const burn = await this.state.contract.burn(this.state.token);
+    await burn.wait();
   };
 
 
@@ -77,12 +86,28 @@ class CampaignIndex extends Component {
   render() {
     return (
       <div className={styles.full}>
+        <ToastContainer />
         <div className={styles.header}><h2 className={styles.header2}>UTTAM MINT NFT</h2></div>
         <div className={styles.top}>
           <div className={styles.box}>
             <div className={styles.token1}>SpiderMan NFT</div>
                  <div className={styles.imageContainer}><Image src={spidermanImage} alt="Spiderman" className={styles.image}/></div>
                 <button className={styles.button} onClick={this.onSubmit}>MINT</button>
+                <div className={styles.token1}>Enter the Token Id you want to Burn</div>
+                <div className={styles.burn}>
+                <input
+              type="number"
+              className={styles.input1}
+              placeholder="0"
+              value={this.state.token}
+              onChange={event => this.setState({
+                token: event.target.value
+              })}
+            />
+              <div>
+                <button className={styles.buttonBurn} onClick={this.onSubmitBurn}>BURN</button>
+              </div>
+              </div>  
               </div>
         </div>
       </div>

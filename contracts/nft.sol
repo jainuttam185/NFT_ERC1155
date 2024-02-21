@@ -7,13 +7,28 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract nft is ERC721URIStorage, Ownable {
 
     uint public counter;
+    uint listPrice=0.0001 ether;
+    mapping(uint256 counter => address) public tokenOwner;
+
 
     constructor() ERC721("Spiderman","Spider") Ownable(msg.sender){}
     
-    function mint(address _to,string calldata _uri) external onlyOwner{
-            counter++;
-            _mint(_to,counter);
-            _setTokenURI(counter,_uri);
+    function getListPrice() public view returns (uint){
+        return listPrice;
     }
-}       
 
+    function mint(string calldata _uri) external payable {
+            require(msg.value == 0.0001 ether,"please enter correct amount");
+            counter++;
+            _mint(msg.sender,counter);
+            _setTokenURI(counter,_uri);
+            tokenOwner[counter]=msg.sender;
+    }
+    
+    function burn(uint _tokenId) external payable {
+          require(tokenOwner[_tokenId]==msg.sender,"You are not the owner of contract");
+          _burn(_tokenId);
+          payable(msg.sender).transfer(listPrice);
+    }
+
+}
