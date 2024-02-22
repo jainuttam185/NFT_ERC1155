@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 class CampaignIndex extends Component {
   state = {
-    token: 0, outputValue: "", contract: "", Provider: "", ipfsaddress: "ipfs://bafkreidblxpobb5frd57djj43mavu2ixtbyrofqq3ieflpwavaoqq524yq", toaddress: "0xf261F307159B06BeAAB840fe4281d456F5156A50", contractAddress: "0x8F2e1016c2F0Ea42603A96ef37523E6a8063c4F5", loading: false
+    token: 0, outputValue: "", contract: "", Provider: "", ipfsaddress: "ipfs://bafkreidblxpobb5frd57djj43mavu2ixtbyrofqq3ieflpwavaoqq524yq", toaddress: "0xf261F307159B06BeAAB840fe4281d456F5156A50", contractAddress: "0x8F2e1016c2F0Ea42603A96ef37523E6a8063c4F5", loading: false, isloading:false, burnloading:false
   };
 
   async componentDidMount() {
@@ -60,16 +60,23 @@ class CampaignIndex extends Component {
       console.log(this.state.contract)
       event.preventDefault();
       this.setState({ loading: true });
+      this.setState({ isloading: true });
       const price = await this.state.contract.Price();
       const mint = await this.state.contract.mint(this.state.ipfsaddress, { value: price });
       this.state.loading && toast("Please wait for few seconds");
       //toast(mint ,{pending:"Please wait for few seconds",success:"Mint Successfull",error:"Sorry,Mint failed"});
       await mint.wait();
+      // this.setState({ loading: false });
       toast("Mint Successfull");
     } catch (error) {
       const errorMessage = error.message.split("(")[0];
-      toast(errorMessage);
+      const fullMessage = errorMessage[0].toUpperCase() + errorMessage.slice(1);
+      toast(fullMessage);
     } 
+    finally {
+      this.setState({ loading: false });
+      this.setState({ isloading: false });
+    }
 
   };
 
@@ -78,12 +85,18 @@ class CampaignIndex extends Component {
     console.log(this.state.contract)
     event.preventDefault();
     this.setState({ loading: true });
+    this.setState({ burnloading: true });
     const burn = await this.state.contract.burn(this.state.token);
     this.state.loading && toast("Please wait for few seconds");
     await burn.wait();
     toast("Burn Successfull");}catch(error){
       const errorMessage = error.message.split("(")[0];
-      toast(errorMessage);
+      const fullMessage = errorMessage[0].toUpperCase() + errorMessage.slice(1);
+      toast(fullMessage);
+    }
+    finally {
+      this.setState({ loading: false });
+      this.setState({ burnloading: false });
     }
   };
 
@@ -105,12 +118,15 @@ class CampaignIndex extends Component {
     return (
       <div className={styles.full}>
         <ToastContainer />
-        <div className={styles.header}><h2 className={styles.header2}>UTTAM MINT NFT</h2></div>
+        <div className={styles.header}><h2 className={styles.header2}>UTTAM MINT NFT</h2></div> 
         <div className={styles.top}>
           <div className={styles.box}>
             <div className={styles.token1}>SpiderMan NFT</div>
             <div className={styles.imageContainer}><Image src={spidermanImage} alt="Spiderman" className={styles.image} /></div>
-            <button className={styles.button} onClick={this.onSubmit}>MINT</button>
+            {/* {this.state.isloading ? <button disabled={this.state.isloading} className={styles.button}><p className={styles.spinner}></p></button> : <button className={styles.button} onClick={this.onSubmit}>MINT</button>} */}
+            <button disabled={this.state.isloading} className={styles.button} onClick={this.onSubmit}> 
+            {this.state.isloading ? <p className={styles.spinner}></p> : "Mint" }
+            </button>
             <div className={styles.token1}>Enter the Token Id you want to Burn</div>
             <div className={styles.burn}>
               <input
@@ -123,7 +139,10 @@ class CampaignIndex extends Component {
                 })}
               />
               <div>
-                <button className={styles.buttonBurn} onClick={this.onSubmitBurn}>BURN</button>
+              <button disabled={this.state.burnloading} className={styles.buttonBurn} onClick={this.onSubmitBurn}> 
+            {this.state.burnloading ? <p className={styles.spinner}></p> : "Burn" }
+            </button>
+                
               </div>
             </div>
           </div>
