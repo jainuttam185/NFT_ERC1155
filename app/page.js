@@ -11,38 +11,38 @@ import 'react-toastify/dist/ReactToastify.css';
 
 class CampaignIndex extends Component {
   state = {
-  token: 0, outputValue: "", contract:"", Provider:"",ipfsaddress:"ipfs://bafkreidblxpobb5frd57djj43mavu2ixtbyrofqq3ieflpwavaoqq524yq" ,toaddress:"0xf261F307159B06BeAAB840fe4281d456F5156A50", contractAddress: "0xA7bec887322DF05a20eBCe37B82d0a3ab4Db9706",loading:false
-};
+    token: 0, outputValue: "", contract: "", Provider: "", ipfsaddress: "ipfs://bafkreidblxpobb5frd57djj43mavu2ixtbyrofqq3ieflpwavaoqq524yq", toaddress: "0xf261F307159B06BeAAB840fe4281d456F5156A50", contractAddress: "0x8F2e1016c2F0Ea42603A96ef37523E6a8063c4F5", loading: false
+  };
 
   async componentDidMount() {
 
     const provider = new ethers.BrowserProvider(window.ethereum);
-      if (provider) {
-        await provider.send("eth_requestAccounts", []);
-        const signer = await provider.getSigner();
-        const address = await signer.getAddress();
-        //setAccount(address);
-        // const contractAddress = "0xcC680Ce60E640F8BEF955AC5fDe00F4700DC97D3";
-        console.log(provider);
-        const contract = new ethers.Contract(
-          this.state.contractAddress,
-          nft.abi,
-          signer
-        );
-        
-        //this.setState.contract=contract;
-        this.setState({
-          contract: contract
-        });
-        this.setState({
-          Provider:signer
-        });
-        // this.setState.Token1Contract=Token1Contract;
-        // this.setState.Token2Contract=Token2Contract;
-        // this.setState.Provider=signer;
-      } else {
-        alert("Metamask is not installed.");
-      }
+    if (provider) {
+      await provider.send("eth_requestAccounts", []);
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress();
+      //setAccount(address);
+      // const contractAddress = "0xcC680Ce60E640F8BEF955AC5fDe00F4700DC97D3";
+      console.log(provider);
+      const contract = new ethers.Contract(
+        this.state.contractAddress,
+        nft.abi,
+        signer
+      );
+
+      //this.setState.contract=contract;
+      this.setState({
+        contract: contract
+      });
+      this.setState({
+        Provider: signer
+      });
+      // this.setState.Token1Contract=Token1Contract;
+      // this.setState.Token2Contract=Token2Contract;
+      // this.setState.Provider=signer;
+    } else {
+      alert("Metamask is not installed.");
+    }
 
 
     // this.setState({
@@ -56,17 +56,35 @@ class CampaignIndex extends Component {
     // console.log("line2", parseInt(this.state.reserveOut));
   }
   onSubmit = async (event) => {
-    console.log(this.state.contract)
-    event.preventDefault();
-    const mint = await this.state.contract.mint(this.state.ipfsaddress,{value:ethers.parseEther("0.0001")});
-    await mint.wait();
+    try {
+      console.log(this.state.contract)
+      event.preventDefault();
+      this.setState({ loading: true });
+      const price = await this.state.contract.Price();
+      const mint = await this.state.contract.mint(this.state.ipfsaddress, { value: price });
+      this.state.loading && toast("Please wait for few seconds");
+      //toast(mint ,{pending:"Please wait for few seconds",success:"Mint Successfull",error:"Sorry,Mint failed"});
+      await mint.wait();
+      toast("Mint Successfull");
+    } catch (error) {
+      const errorMessage = error.message.split("(")[0];
+      toast(errorMessage);
+    } 
+
   };
 
   onSubmitBurn = async (event) => {
+    try{
     console.log(this.state.contract)
     event.preventDefault();
+    this.setState({ loading: true });
     const burn = await this.state.contract.burn(this.state.token);
+    this.state.loading && toast("Please wait for few seconds");
     await burn.wait();
+    toast("Burn Successfull");}catch(error){
+      const errorMessage = error.message.split("(")[0];
+      toast(errorMessage);
+    }
   };
 
 
@@ -91,24 +109,24 @@ class CampaignIndex extends Component {
         <div className={styles.top}>
           <div className={styles.box}>
             <div className={styles.token1}>SpiderMan NFT</div>
-                 <div className={styles.imageContainer}><Image src={spidermanImage} alt="Spiderman" className={styles.image}/></div>
-                <button className={styles.button} onClick={this.onSubmit}>MINT</button>
-                <div className={styles.token1}>Enter the Token Id you want to Burn</div>
-                <div className={styles.burn}>
-                <input
-              type="number"
-              className={styles.input1}
-              placeholder="0"
-              value={this.state.token}
-              onChange={event => this.setState({
-                token: event.target.value
-              })}
-            />
+            <div className={styles.imageContainer}><Image src={spidermanImage} alt="Spiderman" className={styles.image} /></div>
+            <button className={styles.button} onClick={this.onSubmit}>MINT</button>
+            <div className={styles.token1}>Enter the Token Id you want to Burn</div>
+            <div className={styles.burn}>
+              <input
+                type="number"
+                className={styles.input1}
+                placeholder="0"
+                value={this.state.token}
+                onChange={event => this.setState({
+                  token: event.target.value
+                })}
+              />
               <div>
                 <button className={styles.buttonBurn} onClick={this.onSubmitBurn}>BURN</button>
               </div>
-              </div>  
-              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
