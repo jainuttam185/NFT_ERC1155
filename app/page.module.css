@@ -33,7 +33,7 @@
 
 .box{
     width: 30%;
-    height: 90%;
+    height: 95%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -116,9 +116,7 @@
     justify-content: space-between;
   }
 
-  .buttonBurn{
-    width: 100px;
-  }
+  
 
   @keyframes spinner {
     0% {
@@ -144,6 +142,19 @@
     will-change: transform;
   }
   
+  .price{
+    color:#e4e3ea;
+    display: flex;
+    justify-content: space-between;
+    width: 400px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .pricewithin{
+    background-color:  rgb(252, 114, 255);
+    border-radius: 10px;
+  }
   
   
   
