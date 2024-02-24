@@ -40,8 +40,8 @@
     justify-content: space-evenly;
     background-color: #121212;
     border-radius: 10px;
-    padding-top: 30px;
-    padding-bottom: 30px;
+    padding-top: 15px;
+    padding-bottom: 15px;
   }
 
 .input1{
@@ -156,10 +156,16 @@
     border-radius: 10px;
   }
   
-  
-  
-  
-  
+  .innerPrice{
+    padding: 8px;
+    width:45%;
+    text-align: center;
+    height: 60px;
+    border-radius: 5px;
+    border-style: dashed;
+    border-color: rgb(252, 114, 255);
+    font-weight: bold;
+  }
   
   
   

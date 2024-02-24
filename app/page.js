@@ -23,6 +23,7 @@ class CampaignIndex extends Component {
     burnloading: false,
     mintPrice: 0,
     burnPrice: 0,
+    number:0,
   };
 
   async componentDidMount() {
@@ -52,6 +53,9 @@ class CampaignIndex extends Component {
       });
       this.setState({
         burnPrice: await contract.BuurnPrice(),
+      });
+      this.setState({
+        number: await contract.NumberOfTokens(),
       });
       // this.setState.Token1Contract=Token1Contract;
       // this.setState.Token2Contract=Token2Contract;
@@ -89,6 +93,9 @@ class CampaignIndex extends Component {
       this.setState({
         burnPrice: await this.state.contract.BuurnPrice()
       });
+      this.setState({
+        number: await this.state.contract.NumberOfTokens()
+      });
     } catch (error) {
       const errorMessage = error.message.split("(")[0];
       const fullMessage = errorMessage[0].toUpperCase() + errorMessage.slice(1);
@@ -114,6 +121,9 @@ class CampaignIndex extends Component {
       });
       this.setState({
         burnPrice: await this.state.contract.BuurnPrice()
+      });
+      this.setState({
+        number: await this.state.contract.NumberOfTokens()
       });
     } catch (error) {
       const errorMessage = error.message.split("(")[0];
@@ -154,10 +164,12 @@ class CampaignIndex extends Component {
               )}
             </button>
             <div className={styles.price}>
-                   <div>{this.state.mintPrice.toString()}</div>
-                   <div>{this.state.burnPrice.toString()}</div> 
+                   <div className={styles.innerPrice}  style={this.state.number == 0 ? { width:'400px'} : {}}>Mint Price: <br/>{(this.state.mintPrice.toString())/1000000000000000000} Eth</div>
+                   {this.state.number>0 ? <div className={styles.innerPrice}>Burn Price: <br/>{(this.state.burnPrice.toString())/1000000000000000000} Eth</div> : ""}
             </div>
-                <button
+                {
+                  this.state.number > 0 ?
+                  <button
                   disabled={this.state.burnloading}
                   className={styles.buttonBurn}
                   onClick={this.onSubmitBurn}
@@ -167,7 +179,8 @@ class CampaignIndex extends Component {
                   ) : (
                     "Burn"
                   )}
-                </button>
+                </button> : ""
+                }
               </div>
             </div>
           </div>
@@ -176,3 +189,5 @@ class CampaignIndex extends Component {
 }
 
 export default CampaignIndex;
+
+
