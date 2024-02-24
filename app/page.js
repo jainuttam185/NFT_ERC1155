@@ -83,8 +83,12 @@ class CampaignIndex extends Component {
       await mint.wait();
       // this.setState({ loading: false });
       toast("Mint Successfull");
-      this.state.mintPrice = await this.state.contract.Price();
-      this.state.burnPrice = await this.state.contract.BuurnPrice();
+      this.setState({
+        mintPrice: await this.state.contract.Price()
+      });
+      this.setState({
+        burnPrice: await this.state.contract.BuurnPrice()
+      });
     } catch (error) {
       const errorMessage = error.message.split("(")[0];
       const fullMessage = errorMessage[0].toUpperCase() + errorMessage.slice(1);
@@ -105,8 +109,12 @@ class CampaignIndex extends Component {
       this.state.loading && toast("Please wait for few seconds");
       await burn.wait();
       toast("Burn Successfull");
-      this.state.mintPrice = await this.state.contract.Price();
-      this.state.burnPrice = await this.state.contract.BuurnPrice();
+      this.setState({
+        mintPrice: await this.state.contract.Price()
+      });
+      this.setState({
+        burnPrice: await this.state.contract.BuurnPrice()
+      });
     } catch (error) {
       const errorMessage = error.message.split("(")[0];
       const fullMessage = errorMessage[0].toUpperCase() + errorMessage.slice(1);
