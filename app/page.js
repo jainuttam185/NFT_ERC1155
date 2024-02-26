@@ -17,7 +17,7 @@ class CampaignIndex extends Component {
     ipfsaddress:
       "ipfs://bafkreidblxpobb5frd57djj43mavu2ixtbyrofqq3ieflpwavaoqq524yq",
     toaddress: "0xf261F307159B06BeAAB840fe4281d456F5156A50",
-    contractAddress: "0xf8d1f53b958d76Aa1297389166BeC71124fcaC83",
+    contractAddress: "0x33c3d62b17E81d21a55798e24dD40dD825969244",
     loading: false,
     isloading: false,
     burnloading: false,
@@ -79,7 +79,7 @@ class CampaignIndex extends Component {
       this.setState({ loading: true });
       this.setState({ isloading: true });
       const price = await this.state.contract.Price();
-      const mint = await this.state.contract.mint(this.state.ipfsaddress, {
+      const mint = await this.state.contract.mint( {
         value: price,
       });
       this.state.loading && toast("Please wait for few seconds");

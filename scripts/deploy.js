@@ -7,7 +7,7 @@
 const hre = require("hardhat");
 
 async function main() {
-  const nftmint = await hre.ethers.deployContract("nft");
+  const nftmint = await hre.ethers.deployContract("nft", ["ipfs://bafkreidblxpobb5frd57djj43mavu2ixtbyrofqq3ieflpwavaoqq524yq",500]);
   await nftmint.waitForDeployment();
   console.log("NFT contract deployed at address: ", await nftmint.getAddress());
 

@@ -1,35 +1,47 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract nft is ERC721URIStorage, Ownable {
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+
+contract nft is ERC1155, ERC1155Burnable, ERC1155Supply {
+
     uint256 public counter;
-    uint256 public totalSupply;
+    uint256 public totalSupplyy;
     uint256 listPrice = 0.001 ether;
     mapping(uint256 => address) public tokenOwner;
     mapping(address => uint[]) public countOfTokenId;
 
-    constructor() ERC721("Spiderman", "Spider") Ownable(msg.sender) {}
+    uint256 maxSupply;
+    constructor(string memory _uri, uint256 _maxSupply) ERC1155(_uri)
+    {
+        maxSupply = _maxSupply;
+    }
 
     function getListPrice() public view returns (uint) {
         return listPrice;
     }
 
     function Price() public view returns (uint256) {
-        if (totalSupply == 0) {
+        if (totalSupplyy == 0) {
             return 100000000000000;
         }
-        uint256 price = 1000000000000000000*(totalSupply)**2 / 8000;
+        uint256 price = 1000000000000000000*(totalSupplyy)**2 / 8000;
         return price;
     }
 
+    function setURI(string memory newuri) public {
+        _setURI(newuri);
+    }
+
     function BuurnPrice() public view returns (uint){
-        if(totalSupply==0){
+        if(totalSupplyy==0){
             return 0;
         }
-        uint burnsupply=totalSupply-1;
+        uint burnsupply=totalSupplyy-1;
         if (burnsupply == 0) {
             return 100000000000000;
         }
@@ -42,13 +54,12 @@ contract nft is ERC721URIStorage, Ownable {
         return count;
     }
 
-    function mint(string calldata _uri) external payable {
+    function mint() external payable {
         uint256 mintPrice = Price();
         require(msg.value == mintPrice, "please enter correct amount");
         counter++;
-         totalSupply++;
-        _mint(msg.sender, counter);
-        _setTokenURI(counter, _uri);
+        totalSupplyy++;
+        _mint(msg.sender, 0, 1, "");
         tokenOwner[counter] = msg.sender;
         countOfTokenId[msg.sender].push(counter);
     }
@@ -57,9 +68,19 @@ contract nft is ERC721URIStorage, Ownable {
         require(countOfTokenId[msg.sender].length>0,"Sorry don't have enough tokens,Please mint");
         uint length = countOfTokenId[msg.sender].length;
         uint _tokenId = countOfTokenId[msg.sender][length-1];                           
-        totalSupply--;
-        _burn(_tokenId);
+        totalSupplyy--;
+        burn(msg.sender, 0, 1);
         countOfTokenId[msg.sender].pop();
         payable(msg.sender).transfer(Price());
     }
+
+    function _update(
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory values
+    ) internal override(ERC1155, ERC1155Supply) {
+        super._update(from, to, ids, values);
+    }
+
 }
